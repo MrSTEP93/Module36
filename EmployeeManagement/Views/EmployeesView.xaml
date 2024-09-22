@@ -12,7 +12,11 @@
         <vm:EmployeesViewModel></vm:EmployeesViewModel>
     </Window.DataContext>
     <Grid>
-        <ListView ItemsSource="{Binding Employees}" Margin="10,10,10,10">
+        <TextBox Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}" Width="120"
+                 HorizontalAlignment="Left" Margin="10,24,0,0" TextWrapping="Wrap" VerticalAlignment="Top" />
+        
+        <ListView PreviewMouseDoubleClick="ListView_PreviewMouseDoubleClick" 
+                  ItemsSource="{Binding Employees, UpdateSourceTrigger=PropertyChanged}" Margin="10,55,10,10">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Width="150" DisplayMemberBinding="{Binding LastName}">
@@ -36,6 +40,5 @@
                 </GridView>
             </ListView.View>
         </ListView>
-
     </Grid>
 </Window>
