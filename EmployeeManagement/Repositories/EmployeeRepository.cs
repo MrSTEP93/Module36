@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EmployeeManagement.Repositories
 {
-    internal class EmployeeRepository
+    internal class EmployeeRepository : IEmployeeRepository
     {
         private readonly List<Employee> _employees = new List<Employee>();
 

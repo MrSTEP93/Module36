@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace EmployeeManagement.ViewModels
 {
-    public class EmployeesViewModel : INotifyPropertyChanged
+    public class EmployeesViewModel : INotifyPropertyChanged, IEmployeesViewModel
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -20,12 +20,15 @@ namespace EmployeeManagement.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
-        private EmployeeRepository Repo { get; }
+        private readonly IEmployeeRepository _employeeRepo;
+        private readonly ILogger _logger;
 
-        public EmployeesViewModel()
+        public EmployeesViewModel(IEmployeeRepository employeeRepository, ILogger logger)
         {
-            Repo = new EmployeeRepository();
+            _employeeRepo = employeeRepository;
+            _logger = logger;
             FillListView();
+            logger.WriteEvent("Application started");
         }
 
         private ObservableCollection<Employee> _employees;
@@ -53,7 +56,6 @@ namespace EmployeeManagement.ViewModels
             {
                 _filter = value;
                 FillListView();
-                //OnPropertyChanged();
             }
         }
 
@@ -61,12 +63,31 @@ namespace EmployeeManagement.ViewModels
         {
             if (!string.IsNullOrEmpty(_filter))
             {
-                _employees = new ObservableCollection<Employee>(
-                  Repo.GetAll().Where(v => v.FirstName.Contains(_filter)));
+                Employees = new ObservableCollection<Employee>(
+                  _employeeRepo.GetAll().Where(v => v.FirstName.Contains(_filter)));
+                FilterMessage = $"По вашему запросу найдено {_employees.Count} записей";
             }
             else
-                _employees = new ObservableCollection<Employee>(
-                  Repo.GetAll());
+            {
+                Employees = new ObservableCollection<Employee>(
+                  _employeeRepo.GetAll());
+                FilterMessage = "Введите данные для поиска";
+            }
+        }
+
+        private string _filterMessage;
+        public string FilterMessage
+        {
+            get
+            {
+                return _filterMessage;
+            }
+
+            set
+            {
+                _filterMessage = value;
+                OnPropertyChanged();
+            }
         }
     }
 }
